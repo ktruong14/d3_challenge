@@ -69,12 +69,12 @@ d3.csv("assets/data/data.csv").then(function (healthData, err) {
         .append("circle")
         .attr("cx", d => xLinearScale(d.poverty))
         .attr("cy", d => yLinearScale(d.healthcare))
-        .attr("r", 15)
-        .attr("fill", "lightgreen")
+        .attr("r", 13)
+        .attr("fill", "lightblue")
         .attr("opacity", ".5");
 
     // append initial text
-    var textGroup = chartGroup.selectAll("text")
+    chartGroup.selectAll("text")
         .data(healthData)
         .enter()
         .append("text")
