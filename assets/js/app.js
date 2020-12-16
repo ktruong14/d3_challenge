@@ -15,7 +15,7 @@ var height = svgHeight - margin.top - margin.bottom;
 // Create an SVG wrapper, append an SVG group that will hold our chart,
 // and shift the latter by left and top margins.
 var svg = d3
-    .select(".chart")
+    .select("#scatter")
     .append("svg")
     .attr("width", svgWidth)
     .attr("height", svgHeight);
@@ -36,11 +36,12 @@ d3.csv("assets/data/data.csv").then(function (healthData, err) {
     healthData.forEach(function (data) {
         data.poverty = +data.poverty;
         data.healthcare = +data.healthcare;
+        data.abbr = data.abbr;
     });
 
     // Create x scale function
     var xLinearScale = d3.scaleLinear()
-        .domain([0, d3.max(healthcare, d => d.poverty)])
+        .domain([9, d3.max(healthData, d => d.poverty)])
         .range([0, width]);
 
     // Create y scale function
@@ -68,8 +69,8 @@ d3.csv("assets/data/data.csv").then(function (healthData, err) {
         .append("circle")
         .attr("cx", d => xLinearScale(d.poverty))
         .attr("cy", d => yLinearScale(d.healthcare))
-        .attr("r", 20)
-        .attr("fill", "pink")
+        .attr("r", 15)
+        .attr("fill", "lightgreen")
         .attr("opacity", ".5");
 
     // append initial text
@@ -77,8 +78,9 @@ d3.csv("assets/data/data.csv").then(function (healthData, err) {
         .data(healthData)
         .enter()
         .append("text")
-        .attr("x", d => xLinearScale(d.poverty))
-        .attr("y", d => yLinearScale(d.healthcare))
+        .style("fill", "black")
+        .attr('x', d => xLinearScale(d.poverty))
+        .attr('y', d => yLinearScale(d.healthcare))
         .attr("dy", ".35em")
         .attr("text-anchor", "middle")
         .text(d => d.abbr);
@@ -96,23 +98,5 @@ d3.csv("assets/data/data.csv").then(function (healthData, err) {
         .attr("transform", `translate(${width / 2.5}, ${height + margin.top + 30})`)
         .attr("class", "axisText")
         .text("In Poverty (%)");
-
-    // Tooltip
-    var toolTip = d3.tip()
-        .attr("class", "tooltip")
-        .offset([80, -60])
-        .html(function (d) {
-            return (`${d.state}<br>Population In Poverty (%): ${d.poverty}<br>Lacks Healthcare (%): ${d.healthcare}`);
-        });
-
-    chartGroup.call(toolTip);
-
-    chartGroup.on("mouseover", function (data) {
-        toolTip.show(data);
-    })
-        // onmouseout event
-        .on("mouseout", function (data, index) {
-            toolTip.hide(data);
-        });
 });
 
